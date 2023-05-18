@@ -133,6 +133,7 @@ typedef struct data
 	int			start;
 }	t_data;
 
+//double pointer 4 data
 typedef struct dist
 {
 	double	distance;
@@ -163,5 +164,11 @@ int			handle_mouse(int x, int y, t_data *data);
 void		draw_rays(t_data *data);
 void		draw_line(t_data *data, double ray_x, double ray_y, double len);
 void		ft_destroy(t_data *data);
+
+
+/*****************************/
+void check_args(int ac, char    *av[]);
+void check_map(char  **map);
+
 
 # endif

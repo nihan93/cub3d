@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sben-ela <sben-ela@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 19:56:00 by sben-ela          #+#    #+#             */
-/*   Updated: 2023/05/16 10:59:32 by sben-ela         ###   ########.fr       */
+/*   Updated: 2023/05/18 15:27:37 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,10 @@ void	init_data(t_data *data, char *map)
 	data->floor = FLOOR;
 	data->fd = open(map, O_RDONLY);
 	if (data->fd < 0)
-		printf("bad file :(\n"), exit (1);
+		printf("bad file :(\n"),  exit (1);
 	data->count = count_line(map);
 	data->map = get_map(data->fd, data->count);
+	check_map(data->map);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "CUB3D");
 	init_textures(data);
@@ -63,8 +64,7 @@ int	main(int ac, char **av)
 {
 	t_data 		*data;
 
-	if (ac != 2)
-	    return (0);
+	check_args(ac, av);
 	data = malloc(sizeof(t_data));
 	init_data(data, av[1]);
 	mlx_hook(data->win, ON_KEYDOWN, 0, on_key_down, data);
