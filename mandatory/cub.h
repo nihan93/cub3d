@@ -168,7 +168,7 @@ void		ft_destroy(t_data *data);
 
 /*****************************/
 void check_args(int ac, char    *av[]);
-void check_map(char  **map);
-
-
+void check_file(char  **map);
+char	**ft_split(char const *s, char c);
+int	ft_atoi(const char	*str);
 # endif

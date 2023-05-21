@@ -6,7 +6,7 @@
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 13:46:04 by nbarakat          #+#    #+#             */
-/*   Updated: 2023/05/18 20:19:49 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/18 20:44:11 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,4 @@
 //         if 1s aren't surrounding the map exit
 //         check if anything different than 1,0,N,S,E,W
 //         ofc no newlines
+// number of space from previous line should be saved n replaced by ones in  the next one
