@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address
 NAME = cub3d.a
 PROG = cub3d
 SOURCES = main.c utils/getnextline.c utils/mandatory_utils1.c utils/frame.c utils/draw.c	\

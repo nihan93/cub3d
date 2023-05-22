@@ -6,7 +6,7 @@
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 14:24:13 by nbarakat          #+#    #+#             */
-/*   Updated: 2023/05/21 20:45:38 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/22 21:07:08 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int is_empty(char *s)
     int i;
     
     i = 0;
-    while (s[i])
+    while (s && s[i])
     {
         if (s[i] != ' ')
             return (0);
@@ -251,12 +251,181 @@ void check_colors(char **map)
     }
 }
 
+void check_first(char   **map, int index)
+{
+    int i;
+
+    i = 0;
+    while (map[index][i])
+    {
+        if (map[index][i] != '1' && map[index][i] != ' ')
+            printf("The map must be surrounded by walls\n"), exit(1);
+        i++;
+    }
+}
+
+void check_last(char    **map, int index)
+{
+    int i;
+
+    i = 0;
+    while (map[index] && !is_empty(map[index])) 
+        index++;
+    index--;
+     while (map[index][i])
+    {
+        if (map[index][i] != '1' && map[index][i] != ' ')
+            printf("The map must be surrounded by walls\n"), exit(1);
+        i++;
+    }
+}
+
+void check_otherside(char   *line)
+{
+    int i;
+
+    i = ft_strlen(line);
+    while (line[i - 1] == ' ')
+        i--;
+    if (line[i - 1] != '1')
+        printf("The mapy must be surrounded by walls\n"), exit(1);
+
+}
+
+void check_sides(char   **map, int index)
+{
+    int i;
+
+    while (map[index] && !is_empty(map[index]))
+    {
+        i = 0;
+        while (map[index][i])
+        {
+            while (map[index][i] == ' ')
+                i++;
+            if (map[index][i] != '1')
+                printf("The map must be surroxunded by walls\n"), exit(1);
+            check_otherside(map[index]);
+            break ;
+        }
+        index++;
+    }
+}
+
+int getmapsize(char **map, int index)
+{
+    int size;
+
+    size = 1;
+    while (map[index] && !is_empty(map[index]))
+    {
+        index++;
+        size++;
+    }
+    return (size);
+}
+
+int get_largest(char    **map, int index)
+{
+    int ret;
+    
+    ret = index;
+    while (map[index])
+    {
+        if (ft_strlen(map[index]) > ft_strlen(map[ret]))
+            ret  = index;
+        index++;
+    }
+    return (ft_strlen(map[ret]));
+}
+
+void fill_space(char    **copy, int largest, char   **map, int index)
+{
+    int i;
+    int j;
+
+    i = 0;
+    while (i < getmapsize(map, index) - 1)
+    {
+        copy[i] = malloc ((largest + 1) * sizeof (char));
+        j = 0;
+        while (j < largest)
+        {
+            copy[i][j] = ' ';
+            j++;
+        }
+        copy[i][j] = 0;
+        i++;
+    }
+    copy[i] = 0;
+}
+
+void copy_init(char **copy, char    **map, int index, int largest)
+{
+    fill_space(copy, largest, map, index);
+    int i = 0;
+    while (copy[i])
+    {
+        printf("%s\n", copy[i]);
+        i++;
+    }
+}
+
+void check_corners(char **map, int index)
+{
+    int     size;
+    char    **copy;
+    int     largest;
+    
+    size = getmapsize(map, index);
+    largest =  get_largest(map, index);
+    copy = malloc(size * sizeof(char    *));
+    copy_init(copy, map, index, largest);
+}
+
+void check_walls(int index, char    **map)
+{
+    check_first(map, index);
+    check_last(map, index);
+    check_sides(map, index);
+    check_corners(map, index);
+}
+
+void check_newline(char **map, int  index)
+{
+    int flag;
+
+    flag = 0;
+    while (map[index])
+    {
+        if (map[index][0] == 0)
+        {
+            flag = 1;
+            break ;
+        }   
+        index++;
+    }
+    if (flag)
+    {
+        while (map[index])
+        {
+            if (!is_empty(map[index]))
+                printf("Map content can't  have  a newline\n"), exit(1);
+            index++;
+        }
+    }
+}
+
 void check_map(char **map)
 {
-    int    characters[5];
+    int     characters[5];
+    int     index;
 
+    index = get_index(map);
     fill_characters(characters);
-    check_characters(characters, map, get_index(map));
+    check_characters(characters, map, index);
+    check_newline(map, index);
+    check_walls(index, map);
 }
 
 void check_file(char  **map)
