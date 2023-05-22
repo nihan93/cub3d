@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   check_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 14:24:13 by nbarakat          #+#    #+#             */
-/*   Updated: 2023/05/22 22:46:00 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/22 23:15:01 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../cub.h"
+#include "../../cub.h"
 
 int	ft_strncmp(const char	*str1, const char	*str2, size_t	n)
 {
@@ -304,7 +304,7 @@ void check_sides(char   **map, int index)
             while (map[index][i] == ' ')
                 i++;
             if (map[index][i] != '1')
-                printf("The map must be surroxunded by walls\n"), exit(1);
+                printf("The map must be surrounded by walls\n"), exit(1);
             check_otherside(map[index]);
             break ;
         }
@@ -397,7 +397,7 @@ void corners(char   **map)
                     || (map[i + 1] && map[i + 1][j] == ' ') || (map[i + 1] && map[i + 1][j - 1] == ' ')
                     || (map[i + 1] && map[i + 1][j + 1] == ' ') || map[i][j + 1] == ' ' || map[i][j - 1] == ' ') 
                     && map[i][j] != '1')
-                    printf("Map errrorr\n"), exit(1);
+                    printf("Map invalid :(\n"), exit(1);
             else
                 j++;
         }
