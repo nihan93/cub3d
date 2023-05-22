@@ -6,7 +6,7 @@
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 14:24:13 by nbarakat          #+#    #+#             */
-/*   Updated: 2023/05/22 21:07:08 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/22 22:46:00 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,11 +362,45 @@ void fill_space(char    **copy, int largest, char   **map, int index)
 
 void copy_init(char **copy, char    **map, int index, int largest)
 {
+    int i;
+    int j;
+
+    i = 0;
     fill_space(copy, largest, map, index);
-    int i = 0;
-    while (copy[i])
+    while (map[index])
     {
-        printf("%s\n", copy[i]);
+        j = 0;
+        while (map[index][j])
+        {
+            copy[i][j] = map[index][j];
+            j++;
+        }
+        i++;
+        index++;
+    }
+}
+
+void corners(char   **map)
+{
+    int i;
+    int j;
+
+    i = 1;
+    while (map[i])
+    {
+        j = 1;
+        while (map[i][j])
+        {
+            if (map[i][j] == ' ')
+                j++;
+            else if ((map[i - 1][j] == ' ' || map[i - 1][j - 1] == ' ' || map[i - 1][j + 1] == ' '
+                    || (map[i + 1] && map[i + 1][j] == ' ') || (map[i + 1] && map[i + 1][j - 1] == ' ')
+                    || (map[i + 1] && map[i + 1][j + 1] == ' ') || map[i][j + 1] == ' ' || map[i][j - 1] == ' ') 
+                    && map[i][j] != '1')
+                    printf("Map errrorr\n"), exit(1);
+            else
+                j++;
+        }
         i++;
     }
 }
@@ -376,11 +410,12 @@ void check_corners(char **map, int index)
     int     size;
     char    **copy;
     int     largest;
-    
+
     size = getmapsize(map, index);
     largest =  get_largest(map, index);
     copy = malloc(size * sizeof(char    *));
     copy_init(copy, map, index, largest);
+    corners(copy);
 }
 
 void check_walls(int index, char    **map)
