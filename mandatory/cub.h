@@ -131,6 +131,8 @@ typedef struct data
 	int			fd;
 	double		angle;
 	int			start;
+	int			direction;
+	char		**paths;
 }	t_data;
 
 //double pointer 4 data
@@ -164,11 +166,15 @@ int			handle_mouse(int x, int y, t_data *data);
 void		draw_rays(t_data *data);
 void		draw_line(t_data *data, double ray_x, double ray_y, double len);
 void		ft_destroy(t_data *data);
+char		*ft_strtrim(char const	*s1, char const	*set);
 
 
 /*****************************/
 void check_args(int ac, char    *av[]);
-void check_file(char  **map);
+void check_file(char  **map, t_data *data);
 char	**ft_split(char const *s, char c);
 int	ft_atoi(const char	*str);
+// void set_data(t_data    *data);
+int	ft_strncmp(const char	*str1, const char	*str2, size_t	n);
+int    get_index_(char  *s, char    **map);
 # endif

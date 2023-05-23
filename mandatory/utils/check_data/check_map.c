@@ -6,7 +6,7 @@
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 14:24:13 by nbarakat          #+#    #+#             */
-/*   Updated: 2023/05/22 23:15:01 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/23 22:18:51 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,21 @@ void check_count(char  **map, char **elements)
     }
 }
 
+void check_path(char    **map, char **elements)
+{
+    int i;
+    int index;
+
+    i = 0;
+    while (elements[i])
+    {
+        index = get_index_(elements[i], map);
+        if (!map[index][2] || (map[index][2] && is_empty(&map[index][2])))
+            printf("paths must be set :(\n"), exit(1);
+        i++;
+    }
+}
+
 void check_elements(char    **map)
 {
     char    *elements[7];
@@ -132,6 +147,7 @@ void check_elements(char    **map)
     }
     set_elements(elements);
     check_count(map, elements);
+    check_path(map, elements);
 }
 
 void fill_characters(int *characters)
@@ -201,7 +217,7 @@ void check_characters(int   *characters, char  **map, int i)
     check_chars(characters);
 }
 
-void check_num(char **s)
+void check_num(char **s, t_data  *data, int flag)
 {
     int num;
     int i;
@@ -214,9 +230,27 @@ void check_num(char **s)
             printf("R,G,B colors in range [0,255]: 0, 255, 255\n"), exit(1);
         i++;
     }
+    if (flag == 1)
+        data->floor = (ft_atoi(s[0]) << 16) | (ft_atoi(s[1]) << 8) | (ft_atoi(s[2]));
+    else if (flag == 0)
+        data->celing = (ft_atoi(s[0]) << 16) | (ft_atoi(s[1]) << 8) | (ft_atoi(s[2]));
+        
 }
 
-void check_rgb(char **map, int i)
+void double_free(char   **s)
+{
+    int i;
+    
+    i = 0;
+    while (s[i])
+    {
+        free(s[i]);
+        i++;
+    }
+     free(s);
+}
+
+void check_rgb(char **map, int i, t_data    *data, int flag)
 {
     int j;
     char    **split1 = NULL;
@@ -230,23 +264,25 @@ void check_rgb(char **map, int i)
         if (!split1 || !split1[0] || !split1[1] || !split1[2] || split1[3])
             printf("R,G,B colors in range [0,255]: 0, 255, 255\n"), exit(1);
         if (split1 && split1[0])
-            check_num(split1);
-        free(split1);
+            check_num(split1, data, flag);
+        double_free(split1);
     }
     else
         printf("R,G,B colors in range [0,255]: 0, 255, 255\n"), exit(1);
 
 }
 
-void check_colors(char **map)
+void check_colors(char **map, t_data *data)
 {
     int i;
 
     i = 0;
     while (map[i])
     {
-        if (map[i][0] == 'F' || map[i][0] == 'C')
-            check_rgb(map, i);
+        if (map[i][0] == 'F')
+            check_rgb(map, i, data, 1);
+        else if (map[i][0] == 'C')
+            check_rgb(map, i, data, 0);
         i++;
     }
 }
@@ -405,7 +441,58 @@ void corners(char   **map)
     }
 }
 
-void check_corners(char **map, int index)
+void set_textures(char  **s)
+{
+    s[0] = "NO";
+    s[1] = "SO";
+    s[2] = "WE";
+    s[3] = "EA";
+    s[4] = NULL;
+}
+
+void	ft_strcpy(char *dst, const char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+}
+
+void set_paths(t_data   *data, char **map)
+{
+    int     i;
+    char    *ptr;
+    char    *textures[5];
+    char    *path;
+
+    i = 0;
+    set_textures(textures);
+    data->paths = malloc(5 * sizeof(char *));
+    data->paths[4] = NULL;
+    while (i < 4)
+    {
+        ptr = map[get_index_(textures[i], map)];
+        path = ft_strtrim(&ptr[2], " ");
+        data->paths[i] = malloc(ft_strlen(path) + 1);
+        ft_strcpy(data->paths[i], path);
+        i++;
+        free(path);
+    }
+    i = 0;
+    while (data->paths[i])
+    {
+        printf("%s\n", data->paths[i]);
+        i++;
+    }
+}
+
+
+void check_corners(char **map, int index, t_data *data)
 {
     int     size;
     char    **copy;
@@ -416,14 +503,18 @@ void check_corners(char **map, int index)
     copy = malloc(size * sizeof(char    *));
     copy_init(copy, map, index, largest);
     corners(copy);
+    set_paths(data, map);
+    double_free(map);
+    data->map = copy;
+    /*****************************************/
 }
 
-void check_walls(int index, char    **map)
+void check_walls(int index, char    **map, t_data *data)
 {
     check_first(map, index);
     check_last(map, index);
     check_sides(map, index);
-    check_corners(map, index);
+    check_corners(map, index, data);
 }
 
 void check_newline(char **map, int  index)
@@ -451,7 +542,7 @@ void check_newline(char **map, int  index)
     }
 }
 
-void check_map(char **map)
+void check_map(char **map, t_data *data)
 {
     int     characters[5];
     int     index;
@@ -460,14 +551,15 @@ void check_map(char **map)
     fill_characters(characters);
     check_characters(characters, map, index);
     check_newline(map, index);
-    check_walls(index, map);
+    check_walls(index, map, data);
 }
 
-void check_file(char  **map)
+void check_file(char  **map, t_data *data)
 {
     check_elements(map);
-    check_colors(map);
-    check_map(map);
-    printf("MAP IS READY\n");
-    exit (1);
+    check_colors(map, data);
+    check_map(map, data);
+    // printf("MAP IS READY\n");
+
+    // exit (1);
 }

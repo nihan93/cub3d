@@ -6,7 +6,7 @@
 /*   By: nbarakat <nbarakat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 19:56:00 by sben-ela          #+#    #+#             */
-/*   Updated: 2023/05/21 17:14:11 by nbarakat         ###   ########.fr       */
+/*   Updated: 2023/05/23 20:42:12 by nbarakat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	init_data(t_data *data, char *map)
 		printf("bad file :(\n"),  exit (1);
 	data->count = count_line(map);
 	data->map = get_map(data->fd, data->count);
-	check_file(data->map);
+	check_file(data->map, data);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, WIDTH, HEIGHT, "CUB3D");
 	init_textures(data);
